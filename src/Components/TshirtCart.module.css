@@ -1,8 +1,8 @@
 .CartForm {
     width: 90%;
-    max-width: 700px;
+    max-width: 900px;
     margin: auto;
-    margin-top: 200px;
+    margin-top: 100px;
     position: relative;
     background-color: white;
     display: flex;
@@ -13,7 +13,32 @@
 
   
 }
+.cart-items {
+  list-style: none;
+  margin: 20;
+  padding: 0;
+  color: black;
+  max-height: 20rem;
+  overflow: auto;
+  /* padding-bottom: 1rem;
+  border-bottom: 2px solid #8a2b06; */
 
+  
+  
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin: 1rem 0;
+  /* margin-left: 20rem; */
+    position: absolute;
+    bottom: 55px;
+    right: 60px;
+}
 .button{
     padding: 0.5rem 3rem;
     display: flex;
