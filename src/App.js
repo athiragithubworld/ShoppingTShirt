@@ -19,10 +19,10 @@ const closeCart = () =>{
 }
 
   return (
-    <div>
+    <CartProvider>
       <TShirtShopping onClick={clickOpenCart}></TShirtShopping>
       {openCart && <TshirtCart onClose={closeCart}></TshirtCart>}
-    </div>
+    </CartProvider>
   );
 }
 
