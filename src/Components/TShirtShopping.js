@@ -1,7 +1,11 @@
 
-import React , { useState } from "react";
+import React , { useState , useContext } from "react";
+
+import CartContext from "../store/CartContext";
 
 const TShirtShopping =(props) =>{
+
+    const cartcntx = useContext(CartContext);
 
     const [tshirt , setTshirt] =useState("")
     const [description , setDescription] =useState("")
@@ -11,6 +15,7 @@ const TShirtShopping =(props) =>{
     const [qSmall , setQSmall] =useState("")
     const [productList , setProductList] =useState([])
 
+    // console.log("Productlist",productList)
     const TshirtHandler = (event)=>{
         setTshirt(event.target.value)
     }
@@ -38,6 +43,11 @@ const TShirtShopping =(props) =>{
     const AddProductHandler =(event) =>{
         event.preventDefault();
 
+        if(tshirt==="" || description==="" || price==="" || qLarge==="" || qMedium==="" ||qSmall===""){
+            alert("Please enter valid data")
+            return;
+        }
+
         setProductList ((prevList) =>{
             const ProductItems = [...prevList , 
                 {
@@ -62,6 +72,76 @@ const TShirtShopping =(props) =>{
         setQSmall("");
 
 
+    }
+
+    const LQuantityHandler = (item) =>{
+        // console.log("item",item)
+
+        let qLarge = Number(item.qLarge) - 1
+        
+        productList.map((product)=>{
+            // console.log("product",product)
+            if(product.id===item.id)
+            {
+                // console.log("Large",{...product,qLarge:qLarge})
+                const large = {...product,qLarge:qLarge}
+                if(qLarge>=0){
+                    const updateList=productList.filter(pdt =>pdt.id !==item.id)
+                    // setProductList([large,...updateList])
+                    setProductList([...updateList,large])
+                    cartcntx.addProduct({...item ,quantityLarge:1,quantityMedium:0,quantitySmall:0})
+                }
+                
+
+            }
+        })
+        
+        
+    }
+
+    const MQuantityHandler = (item) =>{
+        
+        // cartcntx.addProduct({...item,quantityLarge:0,quantityMedium:1,quantitySmall:0})
+        let qMedium = Number(item.qMedium) - 1
+        
+        productList.map((product)=>{
+            // console.log("product",product)
+            if(product.id===item.id)
+            {
+                // console.log("Large",{...product,qLarge:qLarge})
+                const Medium = {...product,qMedium:qMedium}
+                if(qMedium>=0){
+                    const updateList=productList.filter(pdt =>pdt.id !==item.id)
+                    setProductList([...updateList,Medium])
+                    cartcntx.addProduct({...item ,quantityLarge:0,quantityMedium:1,quantitySmall:0})
+                }
+                
+
+            }
+        })
+    }
+
+    const SQuantityHandler = (item) =>{
+        
+        // cartcntx.addProduct({...item,quantityLarge:0,quantityMedium:0,quantitySmall:1})
+
+        let qSmall = Number(item.qSmall) - 1
+        
+        productList.map((product)=>{
+            // console.log("product",product)
+            if(product.id===item.id)
+            {
+                // console.log("Large",{...product,qLarge:qLarge})
+                const Small = {...product,qSmall:qSmall}
+                if(qSmall>=0){
+                    const updateList=productList.filter(pdt =>pdt.id !==item.id)
+                    setProductList([...updateList,Small])
+                    cartcntx.addProduct({...item ,quantityLarge:0,quantityMedium:0,quantitySmall:1})
+                }
+                
+
+            }
+        })
     }
 
     return(
@@ -113,20 +193,21 @@ const TShirtShopping =(props) =>{
 
             </div>
             <button onClick={AddProductHandler}>Add Product</button>
+            </form>
             <ul>
                 {productList.map((pitem) => {
                     return(<li style={{listStyle:"none"}} key={pitem.id}>
                         {pitem.tshirt} - {pitem.description} -{pitem.price}
-                        <button>Large({pitem.qLarge})</button>
-                        <button>Medium({pitem.qMedium})</button>
-                        <button>Small({pitem.qSmall})</button>
+                        <button onClick={() => LQuantityHandler(pitem)}>Large({pitem.qLarge})</button>
+                        <button onClick={() =>MQuantityHandler(pitem)}>Medium({pitem.qMedium})</button>
+                        <button onClick={() =>SQuantityHandler(pitem)}>Small({pitem.qSmall})</button>
                     </li>)
                 })}
             </ul>
-        </form>
+        
         <button onClick={props.onClick}>
         <span>T-Shirt Cart </span>
-        <span> - {0} - </span>
+        <span> - {cartcntx.PrdtList.reduce((a,v)=>(a=Number(a)+(Number(v.quantityLarge+v.quantityMedium+v.quantitySmall))),0)} - </span>
       </button>
       </div>
     )
